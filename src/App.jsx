@@ -1,58 +1,59 @@
 
 
-import React,{useReducer} from "react";
+import React,{useState} from "react";
 import './App.css';
 
 
-const initialState = { tasks: [] };
+function App() {
+const [username, setUsername] = useState('')
+const [password, setPassword] = useState('')
+const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-function reducer(state, action) {
-  switch (action.type) {
-    case 'add_task':
-      return { tasks: [...state.tasks, { id: Date.now(), text: action.text, completed: false }] };
-    case 'toggle_task':
-      return {
-        tasks: state.tasks.map(task =>
-          task.id === action.id ? { ...task, completed: !task.completed } : task)
-      };
-    case 'delete_task':
-      return {
-        tasks: state.tasks.filter(task => task.id !== action.id)
-      };
-    default:
-      throw new Error();
+const handleLogIn = () => {
+  if (username === '' && password === '') {
+    setIsLoggedIn(true)
   }
 }
 
-function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [taskText, setTaskText] = React.useState("");
+const handleLogout = () => {
+  setIsLoggedIn(false)
+  setUsername('')
+  setPassword('')
+}
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    dispatch({ type: 'add_task', text: taskText });
-    setTaskText("");
-  }
-
+if (isLoggedIn) {
+  return (
+    <div>
+      <h1>Welcome, {username}</h1>
+<button type="button" onClick={handleLogout}>Log Out</button>
+    </div>
+  )
+}
 
   return(
 <div>
-<form onSubmit={handleSubmit}>
-  <input value={taskText} onChange={e => setTaskText(e.target.value)}/>
-  <button type="submit">Add Task</button>
-</form>
-{state.tasks.map(task => (
-  <div key={task.id}>
+<h1>Login</h1>
+<form>
+  <label htmlFor="username">Username:</label>
   <input
-  type="checkbox"
-  checked={task.compled}
-  onChange={() => dispatch({type: 'toggle_task', id: task.id})}
-  />
-  {task.text}
-  <button onClick={() => dispatch({type: 'delete_task', id: task.id})}>Delete</button>
-  </div>
-))}
-
+    type="text"
+    id="username"
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+     />
+     <br />
+     <label htmlFor="password">Password:</label>
+     <input
+        type="password"
+        id="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        />
+</form>
+<br />
+<button type="button" onClick={handleLogIn}>
+  Log In
+</button>
 </div>
   )
 }
